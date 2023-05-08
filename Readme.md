@@ -66,6 +66,8 @@ Here is an example output of running the program:
     Certificate Validity Period (Days): 90
     Bypassed JavaScript content:  
 ```
+## Thanks
+- Thank you my friend Varol
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
