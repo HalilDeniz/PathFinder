@@ -50,7 +50,7 @@ Here is an example output of running the program:
 
 ```
 ┌──(root💀denizhalil)-[~/MyProjects/]
-└─# python3 web-info-explorer.py https://www.facebook.com/
+└─# python3 pathFinder.py https://www.facebook.com/
     Site Information:
     Title:  Facebook - Login or Register
     Last Updated Date:  None
