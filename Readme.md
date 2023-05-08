@@ -14,7 +14,7 @@ Web Info Explorer is a Python program that provides information about a website.
 
 1. Clone the repository:
     ```
-    git clone https://github.com/HalilDeniz/Web_Information_Scanner.git
+    git clone https://github.com/HalilDeniz/PathFinder.git
     ```
    
 2. Install the required packages:
