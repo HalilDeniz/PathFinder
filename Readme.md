@@ -31,7 +31,7 @@ Run the program using the following command:
 ```shell
 ┌──(root💀denizhalil)-[~/MyProjects/]
 └─# python3 web-info-explorer.py --help                                             
-usage: web-info-explorer.py [-h] url
+usage: wpathFinder.py [-h] url
 
 Web Information Program
 
