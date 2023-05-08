@@ -6,3 +6,4 @@ pytesseract
 requests
 tldextract
 whois
+python-whois
