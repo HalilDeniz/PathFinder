@@ -1,0 +1,8 @@
+beautifulsoup4
+certifi
+dnspython
+Pillow
+pytesseract
+requests
+tldextract
+whois
