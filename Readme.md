@@ -1,6 +1,6 @@
-# Web Info Explorer
+# Web Path Finder
 
-Web Info Explorer is a Python program that provides information about a website. It retrieves various details such as page title, last updated date, DNS information, subdomains, firewall names, technologies used, certificate information, and more.
+Web Path Finder is a Python program that provides information about a website. It retrieves various details such as page title, last updated date, DNS information, subdomains, firewall names, technologies used, certificate information, and more.
 
 ## Features and Benefits
 
