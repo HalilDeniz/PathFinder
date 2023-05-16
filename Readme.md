@@ -66,6 +66,17 @@ Here is an example output of running the program:
     Certificate Validity Period (Days): 90
     Bypassed JavaScript content:  
 ```
+
+## Contributing
+Contributions are welcome! To contribute to PathFinder, follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your changes to your forked repository.
+5. Open a pull request in the main repository.
+
+
 ## Thanks
 - Thank you my friend Varol
 
