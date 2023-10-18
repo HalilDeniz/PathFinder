@@ -1,9 +1,9 @@
 # Web Path Finder
 
 Web Path Finder is a Python program that provides information about a website. It retrieves various details such as page title, last updated date, DNS information, subdomains, firewall names, technologies used, certificate information, and more.
+<img src="etc/pathfinder.png">
 
 ## Features and Benefits
-
 - Retrieve important information about a website
 - Gain insights into the technologies used by a website
 - Identify subdomains and DNS information
