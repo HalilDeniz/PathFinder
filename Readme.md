@@ -13,12 +13,12 @@ Web Path Finder is a Python program that provides information about a website. I
 ## Getting Started
 
 1. Clone the repository:
-    ```
+    ```shell
     git clone https://github.com/HalilDeniz/PathFinder.git
     ```
    
 2. Install the required packages:
-    ```
+    ```shell
     pip install -r requirements.txt
     ```
 
@@ -48,7 +48,7 @@ Replace `<url>` with the URL of the website you want to explore.
 
 Here is an example output of running the program:
 
-```
+```shell
 ┌──(root💀denizhalil)-[~/MyProjects/]
 └─# python3 pathFinder.py https://www.facebook.com/
     Site Information:
