@@ -86,9 +86,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 For any inquiries or further information, you can reach me through the following channels:
 
+- Linktr [halildeniz](https://linktr.ee/halildeniz)
+- DenizHalil [DenizHalil](https://denizhalil.com)
 - LinkedIn: [Halil Ibrahim Deniz](https://www.linkedin.com/in/halil-ibrahim-deniz/)
 - TryHackMe: [Halilovic](https://tryhackme.com/p/halilovic)
 - Instagram: [deniz.halil333](https://www.instagram.com/deniz.halil333/)
 - YouTube: [Halil Deniz](https://www.youtube.com/c/HalilDeniz)
 - Email: halildeniz313@gmail.com
+
 
