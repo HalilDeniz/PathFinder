@@ -30,7 +30,7 @@ Run the program using the following command:
 
 ```shell
 ┌──(root💀denizhalil)-[~/MyProjects/]
-└─# python3pathFinder.py --help                                             
+└─# python3 pathFinder.py --help                                             
 usage: pathFinder.py [-h] url
 
 Web Information Program
