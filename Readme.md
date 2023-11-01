@@ -30,8 +30,8 @@ Run the program using the following command:
 
 ```shell
 ┌──(root💀denizhalil)-[~/MyProjects/]
-└─# python3 web-info-explorer.py --help                                             
-usage: wpathFinder.py [-h] url
+└─# python3pathFinder.py --help                                             
+usage: pathFinder.py [-h] url
 
 Web Information Program
 
