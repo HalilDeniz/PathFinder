@@ -1,15 +1,18 @@
-from urllib.parse import urlparse
-from bs4 import BeautifulSoup
-from PIL import Image
-from io import BytesIO
-import dns.resolver
-import datetime
-import requests
 import argparse
-import certifi
+import contextlib
+import datetime
 import socket
-import whois
 import ssl
+from io import BytesIO
+from urllib.parse import urlparse
+
+import certifi
+import dns.resolver
+import requests
+import whois
+from PIL import Image
+from bs4 import BeautifulSoup
+
 
 def get_page_title(url):
     try:
@@ -20,13 +23,14 @@ def get_page_title(url):
     except requests.exceptions.RequestException:
         return None
 
+
 def get_last_modified(url):
     try:
         response = requests.head(url)
-        last_modified = response.headers.get('Last-Modified')
-        return last_modified
+        return response.headers.get('Last-Modified')
     except requests.exceptions.RequestException:
         return None
+
 
 def get_creation_date(domain):
     try:
@@ -38,13 +42,14 @@ def get_creation_date(domain):
     except whois.parser.PywhoisError:
         return None
 
+
 def get_dns_info(domain):
     try:
         answers = dns.resolver.resolve(domain, 'A')
-        ip_addresses = [rdata.address for rdata in answers]
-        return ip_addresses
+        return [rdata.address for rdata in answers]
     except dns.resolver.NXDOMAIN:
         return []
+
 
 def get_subdomains(domain):
     try:
@@ -58,16 +63,17 @@ def get_subdomains(domain):
     except dns.resolver.NXDOMAIN:
         return []
 
+
 def get_firewall_info(url):
     try:
-        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
-        firewall_headers = response.headers.get('X-Firewall')
-        if firewall_headers:
-            firewall_names = firewall_headers.split(',')
-            return firewall_names
+        response = requests.get(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'})
+        if firewall_headers := response.headers.get('X-Firewall'):
+            return firewall_headers.split(',')
         return []
     except requests.exceptions.RequestException:
         return None
+
 
 def get_technologies(url):
     try:
@@ -89,65 +95,95 @@ def get_technologies(url):
         for script in scripts:
             script_url = script['src']
             if not script_url.startswith('http'):
-                script_url = urlparse(url).scheme + '://' + urlparse(url).netloc + script_url
-            try:
+                script_url = f'{urlparse(url).scheme}://{urlparse(url).netloc}{script_url}'
+            with contextlib.suppress(requests.exceptions.RequestException):
                 script_response = requests.get(script_url)
                 script_content = script_response.content.decode('utf-8')
-                script_technologies.extend(['wordpress', 'joomla', 'drupal', 'laravel', 'django', 'angular', 'react', 'vue','jquery','html','php','css','sqlite','javascript','mysql','oracle','python','c+','c#'])
-            except requests.exceptions.RequestException:
-                pass
+                script_technologies.extend(
+                    ['wordpress', 'joomla', 'drupal', 'laravel', 'django', 'angular', 'react', 'vue', 'jquery', 'html',
+                     'php', 'css', 'sqlite', 'javascript', 'mysql', 'oracle', 'python', 'c+', 'c#'])
         # Look for technology clues from HTTP response headers
         headers = response.headers
         header_technologies = []
-        for header in headers.values():
-            header_technologies.extend(['wordpress', 'joomla', 'drupal', 'laravel', 'django', 'angular', 'react', 'vue','jquery','html','php','css','sqlite','javascript','mysql','oracle','python','c+','c#'])
+        for _ in headers.values():
+            header_technologies.extend(
+                ['wordpress', 'joomla', 'drupal', 'laravel', 'django', 'angular', 'react', 'vue', 'jquery', 'html',
+                 'php', 'css', 'sqlite', 'javascript', 'mysql', 'oracle', 'python', 'c+', 'c#'])
         # Merge technology titles and list only unique titles
         technologies = list(set(html_technologies + script_technologies + header_technologies))
-        # Clear technology headings and list only programming languages
-        programming_languages = [tech for tech in technologies if tech in ['wordpress', 'joomla', 'drupal', 'laravel', 'django', 'angular', 'react', 'vue','jquery','html','php','css','sqlite','javascript','mysql','oracle','python','c+','c#']]
-        return programming_languages
+        return [
+            tech
+            for tech in technologies
+            if tech
+               in [
+                   'wordpress',
+                   'joomla',
+                   'drupal',
+                   'laravel',
+                   'django',
+                   'angular',
+                   'react',
+                   'vue',
+                   'jquery',
+                   'html',
+                   'php',
+                   'css',
+                   'sqlite',
+                   'javascript',
+                   'mysql',
+                   'oracle',
+                   'python',
+                   'c+',
+                   'c#',
+               ]
+        ]
     except requests.exceptions.RequestException:
         return None
+
 
 def get_certificate_info(url):
     try:
         hostname = urlparse(url).netloc
         context = ssl.create_default_context(cafile=certifi.where())
         with context.wrap_socket(socket.socket(), server_hostname=hostname) as s:
-            s.connect((hostname, 443))
-            certificate = s.getpeercert()
-            issuer = certificate['issuer'][0][0][1]
-            start_date = datetime.datetime.strptime(certificate['notBefore'], "%b %d %H:%M:%S %Y %Z")
-            expiration_date = datetime.datetime.strptime(certificate['notAfter'], "%b %d %H:%M:%S %Y %Z")
-            validity_period = (expiration_date - start_date).days
-            certificate_info = {
-                'Certificate Issuer': issuer,
-                'Certificate Start Date': start_date,
-                'Certificate Expiration Date': expiration_date,
-                'Certificate Validity Period (Days)': validity_period
-            }
-            return certificate_info
+            return extract_ssl_certificate_details(s, hostname)
     except (ssl.SSLError, ConnectionError, socket.gaierror):
         return None
+
+
+def extract_ssl_certificate_details(s, hostname):
+    s.connect((hostname, 443))
+    certificate = s.getpeercert()
+    issuer = certificate['issuer'][0][0][1]
+    start_date = datetime.datetime.strptime(certificate['notBefore'], "%b %d %H:%M:%S %Y %Z")
+    expiration_date = datetime.datetime.strptime(certificate['notAfter'], "%b %d %H:%M:%S %Y %Z")
+    validity_period = (expiration_date - start_date).days
+    return {
+        'Certificate Issuer': issuer,
+        'Certificate Start Date': start_date,
+        'Certificate Expiration Date': expiration_date,
+        'Certificate Validity Period (Days)': validity_period,
+    }
+
 
 def bypass_captcha(captcha_url):
     try:
         captcha_image = requests.get(captcha_url, stream=True).content
         image = Image.open(BytesIO(captcha_image))
-        captcha_text = pytesseract.image_to_string(image)
-        return captcha_text
+        return pytesseract.image_to_string(image)
     except requests.exceptions.RequestException:
         return None
+
 
 def bypass_javascript(url):
     try:
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
         dynamic_content_tag = soup.find(id='dynamic-content')
-        dynamic_content = dynamic_content_tag.text if dynamic_content_tag else ""
-        return dynamic_content
+        return dynamic_content_tag.text if dynamic_content_tag else ""
     except requests.exceptions.RequestException:
         return None
+
 
 def get_site_info(url):
     parsed_url = urlparse(url)
@@ -162,7 +198,7 @@ def get_site_info(url):
     firewall_info = get_firewall_info(url)
     technologies = get_technologies(url)
     certificate_info = get_certificate_info(url)
-    site_info = {
+    return {
         'Title': title,
         'Last Updated Date': last_modified,
         'First Creation Date': creation_date,
@@ -170,9 +206,9 @@ def get_site_info(url):
         'Subdomains': subdomains,
         'Firewall Names': firewall_info,
         'Technologies Used': technologies,
-        'Certificate Information': certificate_info
+        'Certificate Information': certificate_info,
     }
-    return site_info
+
 
 def main(url):
     site_info = get_site_info(url)
@@ -181,20 +217,21 @@ def main(url):
         return
     print("Site Information:")
     for key, value in site_info.items():
-        if key == 'Technologies Used':
+        if key == 'Certificate Information':
             if value:
-                print(key + ': ' + ', '.join(value))
-            else:
-                print(key + ': No technology identified.')
-        elif key == 'Certificate Information':
-            if value:
-                print(key + ':')
+                print(f'{key}:')
                 for cert_key, cert_value in value.items():
-                    print(cert_key + ': ' + str(cert_value))
+                    print(f'{cert_key}: {str(cert_value)}')
             else:
-                print(key + ': No certificate detected.')
+                print(f'{key}: No certificate detected.')
+        elif key == 'Technologies Used':
+            if value:
+                print(f'{key}: ' + ', '.join(value))
+            else:
+                print(f'{key}: No technology identified.')
         else:
-            print(key + ': ' + str(value))
+            print(f'{key}: {str(value)}')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Web Information Program')
